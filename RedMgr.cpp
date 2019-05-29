@@ -13,7 +13,7 @@ bool RedMgr::run(bool &stop) const
     {
         // newSuccess is local to threads.
         usleep(100000);
-        bool newSuccess = _red.eval(threadNum);
+        bool newSuccess = _red->eval(threadNum);
         #pragma omp critical(updateSuccessType)
         {
             if (newSuccess > success)
@@ -30,3 +30,15 @@ bool RedMgr::run(bool &stop) const
     return success;
 }
 
+bool RedMgr::runAll(bool &stop) const
+{  
+    omp_set_num_threads(4);  
+    bool overallSuccess = false;
+    #pragma omp parallel reduction(max: overallSuccess)
+    {
+        overallSuccess = this->run(stop);
+    }
+    stop = true;
+
+    return overallSuccess;
+}
