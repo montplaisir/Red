@@ -1,6 +1,6 @@
 #include <iostream> 
 #include <omp.h>  
-#include "Red.hpp"
+#include "RedMgr.hpp"
 
 int main()   
 {  
@@ -8,9 +8,10 @@ int main()
     bool stop = false;
     bool overallSuccess = false;
     Red red;
+    RedMgr redmgr(red);
     #pragma omp parallel reduction(max: overallSuccess)
     {
-        overallSuccess = red.run(stop);
+        overallSuccess = redmgr.run(stop);
     }
     std::cout << "Success: " << overallSuccess << std::endl;
 }
