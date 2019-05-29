@@ -6,13 +6,13 @@
   
 // This is the eval function that will be run in parallel.
 // In Cython, it will be a callback.
-bool Red::eval()
+bool Red::eval() const
 {
     return (1 == omp_get_thread_num());
 }
 
 
-bool Red::run(bool &stop)
+bool Red::run(bool &stop) const
 {
     // I want success to be global to all threads.
     bool success = false;
