@@ -8,7 +8,7 @@ import sys
 use_openmp = 1
 
 # Hardcoding path to Reduce
-red_path="../Reduce/"
+red_path="../src/"
 
 os_include_dirs = [red_path]
 
