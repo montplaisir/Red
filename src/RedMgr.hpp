@@ -10,10 +10,12 @@ class RedMgr
 {
 private:
     std::unique_ptr<Red> _red;
+    int _numThreads;
 
 public:
-    explicit RedMgr(std::unique_ptr<Red> red)
-      : _red(std::move(red))
+    explicit RedMgr(std::unique_ptr<Red> red, const int numThreads)
+      : _red(std::move(red)),
+        _numThreads(numThreads)
     {};
 
     virtual ~RedMgr() {};

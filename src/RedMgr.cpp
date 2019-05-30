@@ -32,7 +32,7 @@ bool RedMgr::run(bool &stop) const
 
 bool RedMgr::runAll(bool &stop) const
 {  
-    omp_set_num_threads(4);  
+    omp_set_num_threads(_numThreads);  
     bool overallSuccess = false;
     #pragma omp parallel reduction(max: overallSuccess)
     {
