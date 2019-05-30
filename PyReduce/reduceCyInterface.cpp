@@ -69,20 +69,16 @@ public:
 
 
 static int runReduce(Callback cb,
-                     void* apply)
+                     void* apply,
+                     int numThreads)
 {
     int overallSuccess = 0;
 
     try
     {
-        /*
-        Red red;
-        auto success = red.eval(i);
-        return success;
-        */
         std::unique_ptr<Red> pyEval = std::make_unique<PyEval>(cb, apply);
 
-        RedMgr redmgr(std::move(pyEval));
+        RedMgr redmgr(std::move(pyEval), numThreads);
 
         bool stop = false;
         overallSuccess = (int)redmgr.runAll(stop);
