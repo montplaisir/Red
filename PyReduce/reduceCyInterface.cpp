@@ -3,6 +3,9 @@
 // Date: May 2019
 
 #include <exception> 
+#include <iostream> 
+#include <Python.h>
+#include <mutex>
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -10,6 +13,35 @@
 #include "RedMgr.hpp"
 
 typedef int (*Callback)(void* apply, const int i);
+static std::mutex   gMutex;
+
+class PyLockGIL
+{
+private:
+    PyGILState_STATE _gilState;
+
+public:
+    PyLockGIL()
+    {
+        std::cout << "    VRM: Lock the GIL" << std::endl;
+        std::unique_lock<std::mutex>pyLockLock(gMutex);
+        std::cout << "    VRM: Mutex acquired to Lock the GIL" << std::endl;
+        _gilState = PyGILState_Ensure();
+        std::cout << "    VRM: GIL is locked" << std::endl;
+    }
+    ~PyLockGIL()
+    {
+        std::cout << "    VRM: Release the GIL" << std::endl;
+        std::unique_lock<std::mutex>pyLockLock(gMutex);
+        std::cout << "    VRM: Mutex acquired to Release the GIL" << std::endl;
+        PyGILState_Release(_gilState);
+        std::cout << "    VRM: GIL released" << std::endl;
+    }
+
+    PyLockGIL(const PyLockGIL&) = delete;
+    PyLockGIL& operator=(const PyLockGIL&) = delete;
+
+};
 
 
 //Python Evaluator Class
@@ -27,10 +59,17 @@ public:
         _cb(cb),
         _apply(apply)
     {
+        std::cout << "VRM: Constructor for PyEval" << std::endl;
     }
 
+    PyEval(const PyEval& pyEval) = delete;
+    PyEval& operator=(const PyEval& pyEval) = delete;
+
     //Destructor
-    ~PyEval() {}
+    ~PyEval()
+    {
+        std::cout << "VRM: Destructor for PyEval" << std::endl;
+    }
 
     bool eval(const int i) const override
     {
@@ -39,10 +78,13 @@ public:
         //Call Python function on a single EvalPoint
         try
         {
+            PyLockGIL pyLockGIL;
+            std::cout << "    VRM: Call _cb(_apply, " << i << ")" << std::endl;
             success = _cb(_apply, i);
+            std::cout << "    VRM: _cb returned " << success << std::endl;
             if (-1 == success)
             {
-                printf("Unrecoverable Error from Callback, Exiting...\n\n");
+                std::cout << "Unrecoverable Error from Callback. Exiting" << std::endl;
                 //Force exit
                 raise(SIGINT);
                 return false;
@@ -51,11 +93,13 @@ public:
         //If these errors occur, it is due to errors in python code
         catch(...)
         {
-            printf("Unrecoverable Error from Callback, Exiting...\n\n");
+            std::cout << "Unrecoverable Error from Callback. Exiting" << std::endl;
             //Force exit
             raise(SIGINT);
             return false;
         }
+
+        std::cout << "    VRM: eval returns " << (1 == success) << std::endl;
         if (1 == success)
         {
             return true;
@@ -65,12 +109,13 @@ public:
             return false;
         }
     }
+
 };
 
 
 static int runReduce(Callback cb,
                      void* apply,
-                     int numThreads)
+                     const int numThreads)
 {
     int overallSuccess = 0;
 
@@ -81,7 +126,9 @@ static int runReduce(Callback cb,
         RedMgr redmgr(std::move(pyEval), numThreads);
 
         bool stop = false;
+        std::cout << "VRM: Call RedMgr::runAll()" << std::endl;
         overallSuccess = (int)redmgr.runAll(stop);
+        std::cout << "VRM: Call to RedMgr::runAll() done." << std::endl;
 
     }
 

@@ -1,16 +1,15 @@
 import PyReduce
+import random
 import sys
 import threading
 
 # This example of blackbox function is for a single process
 # The blackbox output must be put in the EvalPoint passed as argument
 def bb(x):
-    print("VRM: in bb(x)")
-    # Get thread num. This is the Python thread number, which is
-    # different than the OpenMP thread number.
-    threadNum = threading.get_ident()
-    eval = (0 == threadNum % 3)
-    print("In bb(x), thread number is " + str(threadNum) + " eval is " + str(eval))
+    print("        VRM: in bb(x)")
+    rnd = random.randint(1, 4)
+    eval = (0 == rnd % 3)
+    print("        In bb(x), rnd is " + str(rnd) + ", eval is " + str(eval))
     return eval
 
 
