@@ -8,12 +8,12 @@ $(info Anaconda Version $(conda_version))
 endif
 
 all:
-	python setup_PyReduce.py build_ext --inplace
+	python setup_PyRed.py build_ext --inplace
 
 lib:
-	python setup_PyReduce.py install --user
+	python setup_PyRed.py install --user
 
 clean:
-	@echo Cleaning PyReduce directory...
-	@rm -rf build *.so PyReduce.cpp
+	@echo Cleaning PyRed directory...
+	@rm -rf build *.so PyRed.cpp
 	@echo done.

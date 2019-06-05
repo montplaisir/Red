@@ -1,15 +1,15 @@
-import PyReduce
+import PyRed
 import random
 import sys
 import threading
 
 # This example of blackbox function is for a single process
 # The blackbox output must be put in the EvalPoint passed as argument
-def bb(x):
-    print("        VRM: in bb(x)")
+def bb():
+    print("        VRM: Correctly in bb()")
     rnd = random.randint(1, 4)
     eval = (0 == rnd % 3)
-    print("        In bb(x), rnd is " + str(rnd) + ", eval is " + str(eval))
+    print("        In bb(), rnd is " + str(rnd) + ", eval is " + str(eval))
     return eval
 
 
@@ -17,6 +17,6 @@ numThreads = 4
 if (len(sys.argv) > 1):
     numThreads = int(sys.argv[1])
 
-print("Calling reduce on " + str(numThreads) + " threads")
-success = PyReduce.optimize(bb, numThreads)
-print("Reduce returns: " + str(success))
+print("Calling red on " + str(numThreads) + " threads")
+success = PyRed.optimize(bb, numThreads)
+print("Red returns: " + str(success))

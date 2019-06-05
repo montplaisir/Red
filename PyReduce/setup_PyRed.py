@@ -7,7 +7,7 @@ import sys
 # This value should be set when calling the script
 use_openmp = 1
 
-# Hardcoding path to Reduce
+# Hardcoding path to Red
 red_path="../src/"
 
 os_include_dirs = [red_path]
@@ -30,8 +30,8 @@ if sys.platform.startswith("linux"):
 
 setup(
     ext_modules = cythonize(Extension(
-           "PyReduce", # extension name
-           sources = ["PyReduce.pyx", "reduceCyInterface.cpp"], # Cython source and interface
+           "PyRed", # extension name
+           sources = ["PyRed.pyx", "redCyInterface.cpp"], # Cython source and interface
            include_dirs = os_include_dirs,
            extra_compile_args = compile_args,
            extra_link_args = link_args,
