@@ -1,20 +1,17 @@
-#include <iostream> 
 #include "RedMgr.hpp"
 
 int main(int argc, char ** argv)
 {  
-    bool stop = false;
-    bool overallSuccess = false;
-
-    auto red = std::make_unique<Red>();
+    auto evaluator = std::make_unique<Evaluator>();
     int numThreads = 4;
     if (argc > 1)
     {
         numThreads = std::atoi(argv[1]);
     }
-    std::cout << "Using " << numThreads << " threads." << std::endl;
-    RedMgr redmgr(std::move(red), numThreads);
+    RedMgr redmgr(std::move(evaluator), numThreads);
 
-    overallSuccess = redmgr.runAll(stop);
-    std::cout << "Success: " << overallSuccess << std::endl;
+    bool success = redmgr.run();
+    std::cout << "VRM: success? " << success << std::endl;
+
+    return 0;
 }
