@@ -1,8 +1,8 @@
 
-all: paral
+all: paral.exe
 
-paral: libRed.so main.cpp
-	g++ -O2 -std=c++14 -Wall -fpic -fopenmp ./libRed.so main.cpp -o paral
+paral.exe: libRed.so main.cpp
+	g++ -O2 -std=c++14 -Wall -fpic -fopenmp ./libRed.so main.cpp -o paral.exe
 
 libRed.so: RedMgr.hpp
 	g++ -O2 -std=c++14 -Wall -Wextra -fpic -fopenmp -shared -o libRed.so -L -Wl,-soname,'libRed.so' -Wl,-rpath-link,'.' -Wl,-rpath,'$$ORIGIN'
@@ -10,4 +10,4 @@ libRed.so: RedMgr.hpp
 
 
 clean:
-	rm -f libRed.so paral
+	rm -f libRed.so paral.exe
