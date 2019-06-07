@@ -82,12 +82,14 @@ static bool runRed(Callback cb,
 {
     bool success = 0;
 
+    Py_BEGIN_ALLOW_THREADS
     std::unique_ptr<Evaluator> pyEval = std::make_unique<PyEval>(cb, apply);
     RedMgr redmgr(std::move(pyEval), numThreads);
 
     std::cout << "VRM: Call RedMgr::run()" << std::endl;
     success = redmgr.run();
     std::cout << "VRM: Call to RedMgr::run() done." << std::endl;
+    Py_END_ALLOW_THREADS
 
     return success;
 
